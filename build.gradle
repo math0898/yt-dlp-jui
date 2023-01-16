@@ -1,0 +1,66 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+}
+
+def secrets = new Properties()
+file("secrets.properties").withInputStream { secrets.load(it) }
+
+group 'io.github.math0898'
+version '0.0.0'
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/math0898/SugaEngine")
+        credentials {
+            username = project.findProperty("gpr.user") ?: secrets.getProperty("USERNAME")
+            password = project.findProperty("gpr.key") ?: secrets.getProperty("TOKEN")
+        }
+    }
+}
+
+compileJava {
+    options.release = 19
+}
+
+jacoco {
+    toolVersion = "0.8.8"
+}
+
+jacocoTestReport {
+    reports {
+        xml.required = true
+    }
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(19)
+    }
+    withSourcesJar()
+    withJavadocJar()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.0'
+    testImplementation 'org.mockito:mockito-core:4.8.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
+    implementation 'io.github.math0898:suga-engine-snapshot:3.0.0-zeta1'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+check {
+    finalizedBy(jacocoTestReport)
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class':'io.github.math0898.main.Main'
+    } from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+}
