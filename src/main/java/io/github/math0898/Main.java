@@ -1,4 +1,4 @@
-package io.github.math0898.main;
+package io.github.math0898;
 
 import suga.engine.GameEngine;
 import suga.engine.game.BasicGame;
@@ -25,11 +25,10 @@ public class Main {
      */
     public static void main (String[] args) {
         engine.getLogger().setLevel(Level.DEBUG);
-        Game game = new BasicGame();
+        Game game = new MainGame();
         GraphicsPanel panel = new Graphics2d();
-        Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
-        engine.launchGameWindow(size.width / 2, size.height / 2,
-                "yt-dlp-jui", true, panel, Color.BLACK,
+        engine.launchGameWindow(GameEngine.Window.WINDOWED,
+                "yt-dlp-jui", panel, Color.BLACK,
                 30, 30,
                 new StackGameKeyListener(), new BasicMouseListener(),
                 game);
